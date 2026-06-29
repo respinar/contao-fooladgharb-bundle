@@ -49,7 +49,15 @@ $GLOBALS['TL_DCA']['tl_requests'] = [
 				'href' => 'act=select',
 				'tl_class' => 'header_edit_all',
 				'attributes' => 'onclick="Backend.getScrollOffset();" accesskey="e"'
-			]
+			],
+      'export_csv' => [
+        'href' => 'key=export_csv',
+        'class' => 'header_export_csv',
+    	],
+    	'export_excel' => [
+        'href' => 'key=export_excel',
+        'class' => 'header_export_excel',
+    	],
 		],
 		'operations' => [
 			'edit',
@@ -137,6 +145,12 @@ $GLOBALS['TL_DCA']['tl_requests'] = [
 			'inputType' => 'text',
 			'eval' => ['tl_class' => 'w50'],
 			'sql' => "varchar(255) DEFAULT NULL"
+		],
+		'delivery' => [
+			'exclude' => true,
+			'inputType' => 'text',
+			'eval' => ['tl_class' => 'w50'],
+			'sql' => "varchar(50) DEFAULT NULL"
 		],
 		'date' => [
 			'exclude' => true,
