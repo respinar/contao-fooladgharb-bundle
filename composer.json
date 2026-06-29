@@ -1,7 +1,7 @@
 {
     "name": "respinar/fooladgharb-request-bundle",
     "description": "A Request table bundle for Contao CMS",
-    "keywords": ["contao", "whatsapp", "bundle"],
+    "keywords": ["contao", "request", "bundle"],
     "type": "contao-bundle",
     "license": "MIT",
     "authors": [
