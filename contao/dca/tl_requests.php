@@ -52,13 +52,13 @@ $GLOBALS['TL_DCA']['tl_requests'] = [
 			],
       'export_csv' => [
         'href' => 'key=export_csv',
-        'icon' => 'bundles/fooladgharbrequest/icons/export-csv.svg',
+        'icon' => 'bundles/contaofooladgharb/icons/export-csv.svg',
 				'primary'             => true,
         'attributes' => 'title="' . ($GLOBALS['TL_LANG']['tl_requests']['export_csv'][1] ?? 'Export all requests as a CSV file') . '"',
     	],
     	'export_excel' => [
         'href' => 'key=export_excel',
-        'icon' => 'bundles/fooladgharbrequest/icons/export-excel.svg',
+        'icon' => 'bundles/contaofooladgharb/icons/export-excel.svg',
 				'primary'             => true,
         'attributes' => 'title="' . ($GLOBALS['TL_LANG']['tl_requests']['export_excel'][1] ?? 'Export all requests as an Excel file') . '"',
     	],
