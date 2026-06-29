@@ -8,14 +8,16 @@
  * @license MIT
  */
 
+use Respinar\FooladgharbRequestBundle\Controller\Backend\RequestExportController;
+
 $GLOBALS['BE_MOD']['fooladgharb']['requests']= [
 		'tables' => ['tl_requests'],
 		'export_csv' => [
-        Respinar\FooladgharbRequestBundle\Controller\Backend\RequestExportController::class,
+        RequestExportController::class,
         'exportCsv',
     ],
     'export_excel' => [
-        Respinar\FooladgharbRequestBundle\Controller\Backend\RequestExportController::class,
+        RequestExportController::class,
         'exportExcel',
     ],
 ];
