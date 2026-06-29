@@ -8,7 +8,7 @@
  * @license MIT
  */
 
-use Respinar\FooladgharbRequestBundle\Controller\Backend\RequestExportController;
+use Respinar\ContaoFooladgharbBundle\Controller\Backend\RequestExportController;
 
 $GLOBALS['BE_MOD']['fooladgharb']['requests']= [
 		'tables' => ['tl_requests'],

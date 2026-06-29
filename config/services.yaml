@@ -4,7 +4,7 @@ services:
         autowire: true
         autoconfigure: true    
 
-    Respinar\FooladgharbRequestBundle\:
+    Respinar\ContaoFooladgharbBundle\:
         resource: ../src/
         exclude: ../src/ContaoManager
 

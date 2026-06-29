@@ -1,5 +1,5 @@
 {
-    "name": "respinar/fooladgharb-request-bundle",
+    "name": "respinar/contao-fooladgharb-bundle",
     "description": "A Request table bundle for Contao CMS",
     "keywords": ["contao", "request", "bundle"],
     "type": "contao-bundle",
@@ -13,8 +13,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/respinar/fooladgharb-request-bundle/issues",
-        "source": "https://github.com/respinar/fooladgharb-request-bundle"
+        "issues": "https://github.com/respinar/contao-fooladgharb-bundle/issues",
+        "source": "https://github.com/respinar/contao-fooladgharb-bundle"
     },
     "require": {
         "php": "^8.3",
@@ -25,10 +25,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Respinar\\FooladgharbRequestBundle\\": "src/"
+            "Respinar\\ContaoFooladgharbBundle\\": "src/"
         }
     },    
     "extra": {
-        "contao-manager-plugin": "Respinar\\FooladgharbRequestBundle\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "Respinar\\ContaoFooladgharbBundle\\ContaoManager\\Plugin"
     }
 }

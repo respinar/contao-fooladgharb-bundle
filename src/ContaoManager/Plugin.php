@@ -10,20 +10,20 @@ declare(strict_types=1);
  * @license MIT
  */
 
-namespace Respinar\FooladgharbRequestBundle\ContaoManager;
+namespace Respinar\ContaoFooladgharbBundle\ContaoManager;
 
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
-use Respinar\FooladgharbRequestBundle\FooladgharbRequestBundle;
+use Respinar\ContaoFooladgharbBundle\ContaoFooladgharbBundle;
 
 class Plugin implements BundlePluginInterface
 {
     public function getBundles(ParserInterface $parser): array
     {
         return [
-            BundleConfig::create(FooladgharbRequestBundle::class)
+            BundleConfig::create(ContaoFooladgharbBundle::class)
                 ->setLoadAfter([ContaoCoreBundle::class]),
         ];
     }

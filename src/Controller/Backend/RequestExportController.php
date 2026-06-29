@@ -1,6 +1,6 @@
 <?php
 
-namespace Respinar\FooladgharbRequestBundle\Controller\Backend;
+namespace Respinar\ContaoFooladgharbBundle\Controller\Backend;
 
 use Contao\CoreBundle\Exception\ResponseException;
 use Contao\Database;
