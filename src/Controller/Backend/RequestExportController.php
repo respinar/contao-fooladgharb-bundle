@@ -78,7 +78,7 @@ class RequestExportController
     private function getRows(): array
     {
         $result = Database::getInstance()
-            ->execute('SELECT * FROM tl_requests ORDER BY tstamp DESC');
+            ->execute('SELECT * FROM tl_requests ORDER BY tstamp DESC LIMIT 100');
 
         $rows = [];
 
