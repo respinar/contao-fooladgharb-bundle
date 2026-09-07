@@ -3,7 +3,7 @@
 /*
  * This file is part of Fooladgharb Bundle.
  *
- * (c) Hamid Peywasti 2024 <hamid@respinar.com>
+ * (c) Hamid Peywasti
  *
  * @license MIT
  */
@@ -119,7 +119,7 @@ $GLOBALS['TL_DCA']['tl_requests'] = [
 			'inputType' => 'textarea',
 			'eval' => ['tl_class' => 'clr'],
 			'sql' => "text NOT NULL"
-		],			
+		],
 		'product' => [
 			'exclude' => true,
 			'inputType' => 'text',

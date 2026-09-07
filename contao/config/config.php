@@ -3,7 +3,7 @@
 /*
  * This file is part of Fooladgharb Bundle.
  *
- * (c) Hamid Peywasti 2024 <hamid@respinar.com>
+ * (c) Hamid Peywasti
  *
  * @license MIT
  */
@@ -21,4 +21,3 @@ $GLOBALS['BE_MOD']['fooladgharb']['requests']= [
         'exportExcel',
     ],
 ];
-

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of Contao Whatsapp Button Bundle.
  *
- * (c) Hamid Peywasti 2025 <hamid@respinar.com>
+ * (c) Hamid Peywasti
  *
  * @license MIT
  */
@@ -19,8 +19,8 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 class ContaoFooladgharbBundle extends AbstractBundle
 {
     public function loadExtension(
-        array $config, 
-        ContainerConfigurator $containerConfigurator, 
+        array $config,
+        ContainerConfigurator $containerConfigurator,
         ContainerBuilder $containerBuilder,
     ): void
     {

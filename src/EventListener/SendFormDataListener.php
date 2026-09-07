@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of Contao Whatsapp Button Bundle.
+ *
+ * (c) Hamid Peywasti
+ *
+ * @license MIT
+ */
+
 namespace Respinar\ContaoFooladgharbBundle\EventListener;
 
 use Psr\Log\LoggerInterface;
@@ -53,7 +61,7 @@ class SendFormDataListener
         }
 
         $response = $this->sendLead($leadData, $api_key, $token);
-        
+
         if ($response) {
             $this->logger->info('Lead sent successfully via API.');
             $data['send_status'] = 1;
