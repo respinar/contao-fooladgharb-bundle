@@ -79,11 +79,12 @@ class SendFormDataListener
         try {
             $response = $this->httpClient->request(
                 'GET',
-                'https://my.fooladgharb.com/api/token', [
+                'https://my.fooladgharb.com/api/token',
+                [
                     'headers' => [
                         'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
                     ],
-            ],
+                ],
             );
 
             if (200 === $response->getStatusCode()) {
@@ -113,7 +114,8 @@ class SendFormDataListener
         try {
             $response = $this->httpClient->request(
                 'POST',
-                'https://my.fooladgharb.com/api/leads/v1/add', [
+                'https://my.fooladgharb.com/api/leads/v1/add',
+                [
                     'headers' => [
                         'authtoken' => $authToken,
                         'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
@@ -122,7 +124,7 @@ class SendFormDataListener
                         // sp_session=maibm2oij0qtlnnmosk2c92iko53l0pu',
                     ],
                     'body' => $leadData, // Use json_encode($leadData) if API expects JSON
-            ],
+                ],
             );
 
             if (200 === $response->getStatusCode()) {
