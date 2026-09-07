@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+  <file datatype="php" original="contao/languages/fa/tl_requests.php" source-language="en" target-language="fa">
+    <body>
+      <trans-unit id="tl_requests.name_legend">
+        <source>Contact information</source>
+        <target>اطلاعات تماس</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.product_legend">
+        <source>Product information</source>
+        <target>اطلاعات محصول</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.message_legend">
+        <source>Message</source>
+        <target>پیام</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.datetime_legend">
+        <source>Date and source</source>
+        <target>تاریخ و منبع</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.id.0">
+        <source>ID</source>
+        <target>شناسه</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.id.1">
+        <source>Request ID</source>
+        <target>شناسه درخواست</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.tstamp.0">
+        <source>Created</source>
+        <target>تاریخ ایجاد</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.tstamp.1">
+        <source>The date and time when the request was created.</source>
+        <target>تاریخ و زمان ایجاد درخواست.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.name.0">
+        <source>Name</source>
+        <target>نام</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.name.1">
+        <source>The requester name.</source>
+        <target>نام ثبت‌کننده درخواست.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.province.0">
+        <source>Province</source>
+        <target>استان</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.province.1">
+        <source>The requester province.</source>
+        <target>استان ثبت‌کننده درخواست.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.phone.0">
+        <source>Phone</source>
+        <target>تلفن</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.phone.1">
+        <source>The requester phone number.</source>
+        <target>شماره تلفن ثبت‌کننده درخواست.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.email.0">
+        <source>Email</source>
+        <target>ایمیل</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.email.1">
+        <source>The requester email address.</source>
+        <target>نشانی ایمیل ثبت‌کننده درخواست.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.message.0">
+        <source>Message</source>
+        <target>پیام</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.message.1">
+        <source>The submitted message.</source>
+        <target>پیام ارسال‌شده.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.product.0">
+        <source>Product</source>
+        <target>محصول</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.product.1">
+        <source>The requested product.</source>
+        <target>محصول درخواستی.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.type.0">
+        <source>Type</source>
+        <target>نوع</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.type.1">
+        <source>The requested product type.</source>
+        <target>نوع محصول درخواستی.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.usage.0">
+        <source>Usage</source>
+        <target>کاربری</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.usage.1">
+        <source>The intended usage.</source>
+        <target>کاربری مورد نظر.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.insulation.0">
+        <source>Insulation</source>
+        <target>عایق</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.insulation.1">
+        <source>The selected insulation option.</source>
+        <target>گزینه عایق انتخاب‌شده.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.area.0">
+        <source>Area</source>
+        <target>متراژ</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.area.1">
+        <source>The requested area.</source>
+        <target>متراژ درخواستی.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.delivery.0">
+        <source>Delivery</source>
+        <target>تحویل</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.delivery.1">
+        <source>The selected delivery option.</source>
+        <target>گزینه تحویل انتخاب‌شده.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.date.0">
+        <source>Date</source>
+        <target>تاریخ</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.date.1">
+        <source>The request date.</source>
+        <target>تاریخ درخواست.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.time.0">
+        <source>Time</source>
+        <target>زمان</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.time.1">
+        <source>The request time.</source>
+        <target>زمان درخواست.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.url.0">
+        <source>URL</source>
+        <target>آدرس صفحه</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.url.1">
+        <source>The page URL where the request was submitted.</source>
+        <target>آدرس صفحه‌ای که درخواست از آن ثبت شده است.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.send_status.0">
+        <source>Send status</source>
+        <target>وضعیت ارسال</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.send_status.1">
+        <source>Whether the request has been sent to the external service.</source>
+        <target>مشخص می‌کند درخواست به سرویس خارجی ارسال شده است یا نه.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.lead_id.0">
+        <source>Lead ID</source>
+        <target>شناسه لید</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.lead_id.1">
+        <source>The external lead ID.</source>
+        <target>شناسه لید در سرویس خارجی.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.client_id.0">
+        <source>Client ID</source>
+        <target>شناسه مشتری</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.client_id.1">
+        <source>The external client ID.</source>
+        <target>شناسه مشتری در سرویس خارجی.</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_csv.0">
+        <source>Export CSV</source>
+        <target>خروجی CSV</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_csv.1">
+        <source>Export all requests as a CSV file</source>
+        <target>دریافت همه درخواست‌ها در قالب فایل CSV</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_excel.0">
+        <source>Export Excel</source>
+        <target>خروجی اکسل</target>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_excel.1">
+        <source>Export all requests as an Excel file</source>
+        <target>دریافت همه درخواست‌ها در قالب فایل اکسل</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

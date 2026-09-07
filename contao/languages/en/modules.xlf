@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+  <file datatype="php" original="contao/languages/en/modules.php" source-language="en">
+    <body>
+      <trans-unit id="MOD.fooladgharb">
+        <source>Fooladgharb</source>
+      </trans-unit>
+      <trans-unit id="MOD.requests.0">
+        <source>Requests</source>
+      </trans-unit>
+      <trans-unit id="MOD.requests.1">
+        <source>Manage submitted requests.</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

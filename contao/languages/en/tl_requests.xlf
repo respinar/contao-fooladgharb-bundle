@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+  <file datatype="php" original="contao/languages/en/tl_requests.php" source-language="en">
+    <body>
+      <trans-unit id="tl_requests.name_legend">
+        <source>Contact information</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.product_legend">
+        <source>Product information</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.message_legend">
+        <source>Message</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.datetime_legend">
+        <source>Date and source</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.id.0">
+        <source>ID</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.id.1">
+        <source>Request ID</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.tstamp.0">
+        <source>Created</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.tstamp.1">
+        <source>The date and time when the request was created.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.name.0">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.name.1">
+        <source>The requester name.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.province.0">
+        <source>Province</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.province.1">
+        <source>The requester province.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.phone.0">
+        <source>Phone</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.phone.1">
+        <source>The requester phone number.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.email.0">
+        <source>Email</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.email.1">
+        <source>The requester email address.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.message.0">
+        <source>Message</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.message.1">
+        <source>The submitted message.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.product.0">
+        <source>Product</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.product.1">
+        <source>The requested product.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.type.0">
+        <source>Type</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.type.1">
+        <source>The requested product type.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.usage.0">
+        <source>Usage</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.usage.1">
+        <source>The intended usage.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.insulation.0">
+        <source>Insulation</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.insulation.1">
+        <source>The selected insulation option.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.area.0">
+        <source>Area</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.area.1">
+        <source>The requested area.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.delivery.0">
+        <source>Delivery</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.delivery.1">
+        <source>The selected delivery option.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.date.0">
+        <source>Date</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.date.1">
+        <source>The request date.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.time.0">
+        <source>Time</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.time.1">
+        <source>The request time.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.url.0">
+        <source>URL</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.url.1">
+        <source>The page URL where the request was submitted.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.send_status.0">
+        <source>Send status</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.send_status.1">
+        <source>Whether the request has been sent to the external service.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.lead_id.0">
+        <source>Lead ID</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.lead_id.1">
+        <source>The external lead ID.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.client_id.0">
+        <source>Client ID</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.client_id.1">
+        <source>The external client ID.</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_csv.0">
+        <source>Export CSV</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_csv.1">
+        <source>Export all requests as a CSV file</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_excel.0">
+        <source>Export Excel</source>
+      </trans-unit>
+      <trans-unit id="tl_requests.export_excel.1">
+        <source>Export all requests as an Excel file</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
