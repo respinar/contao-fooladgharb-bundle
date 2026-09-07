@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Respinar\ContaoFooladgharbBundle\EventListener;
 
-use Psr\Log\LoggerInterface;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Form;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsHook('storeFormData')]
@@ -31,28 +31,28 @@ class SendFormDataListener
 
     public function __invoke(array $data, Form $form): array
     {
-
         $api_key = '$2a$08$T6x8FV.j/mAE./sa4PxO0Ofin1ph21vfd';
 
         $token = $this->getAuthToken($api_key);
 
         if (!$token) {
             $this->logger->error('Failed to get auth token.');
+
             return $data;
         }
 
         $this->logger->info('Auth token retrieved successfully.');
 
         $leadData = [
-            'lead_process_id'       => '1',
-            'source'                => '15',
-            'name'                  => $data['name'] ?? 'بدون نام',
-            'mobile'                => $data['phone'] ?? '',
-            'address'               => $data['address'] ?? '',
-            'email'                 => $data['email'] ?? '',
-            'custom_fields[leads][7]'  => $data['national_id'] ?? '',
-            'custom_fields[leads][8]'  => $data['code'] ?? '',
-            'custom_fields[leads][9]'  => $data['branch'] ?? '',
+            'lead_process_id' => '1',
+            'source' => '15',
+            'name' => $data['name'] ?? 'بدون نام',
+            'mobile' => $data['phone'] ?? '',
+            'address' => $data['address'] ?? '',
+            'email' => $data['email'] ?? '',
+            'custom_fields[leads][7]' => $data['national_id'] ?? '',
+            'custom_fields[leads][8]' => $data['code'] ?? '',
+            'custom_fields[leads][9]' => $data['branch'] ?? '',
             'custom_fields[leads][10]' => $data['country'] ?? '',
         ];
 
@@ -74,56 +74,70 @@ class SendFormDataListener
         return $data;
     }
 
-    private function getAuthToken(string $api_key): ?string
+    private function getAuthToken(string $api_key): string|null
     {
         try {
-            $response = $this->httpClient->request('GET', 'https://my.fooladgharb.com/api/token', [
-                'headers' => [
-                    'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
-                ],
-            ]);
+            $response = $this->httpClient->request(
+                'GET',
+                'https://my.fooladgharb.com/api/token', [
+                    'headers' => [
+                        'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
+                    ],
+            ],
+            );
 
-            if ($response->getStatusCode() === 200) {
+            if (200 === $response->getStatusCode()) {
                 $data = $response->toArray(false);
                 if (isset($data['result'])) {
-                    $this->logger->info('Auth token retrieved: ' . $data['result']);
+                    $this->logger->info('Auth token retrieved: '.$data['result']);
+
                     return $data['result'];
                 }
-                $this->logger->error('No result key found in API response: ' . $response->getContent());
+                $this->logger->error('No result key found in API response: '.$response->getContent());
+
                 return null;
             }
 
-            $this->logger->error('Auth API returned non-200 status: ' . $response->getStatusCode());
+            $this->logger->error('Auth API returned non-200 status: '.$response->getStatusCode());
+
             return null;
         } catch (\Exception $e) {
-            $this->logger->error('Auth API error: ' . $e->getMessage());
+            $this->logger->error('Auth API error: '.$e->getMessage());
+
             return null;
         }
     }
 
-    private function sendLead(array $leadData, string $api_key, string $authToken): ?array
+    private function sendLead(array $leadData, string $api_key, string $authToken): array|null
     {
         try {
-            $response = $this->httpClient->request('POST', 'https://my.fooladgharb.com/api/leads/v1/add', [
-                'headers' => [
-                    'authtoken' => $authToken,
-                    'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
-                    // Add cookies if required (see below)
-                    // 'Cookie' => 'csrf_cookie_name=28d1a96241d672ef34ad63005bc7eecc; sp_session=maibm2oij0qtlnnmosk2c92iko53l0pu',
-                ],
-                'body' => $leadData, // Use json_encode($leadData) if API expects JSON
-            ]);
+            $response = $this->httpClient->request(
+                'POST',
+                'https://my.fooladgharb.com/api/leads/v1/add', [
+                    'headers' => [
+                        'authtoken' => $authToken,
+                        'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
+                        // Add cookies if required (see below) 'Cookie' =>
+                        // 'csrf_cookie_name=28d1a96241d672ef34ad63005bc7eecc;
+                        // sp_session=maibm2oij0qtlnnmosk2c92iko53l0pu',
+                    ],
+                    'body' => $leadData, // Use json_encode($leadData) if API expects JSON
+            ],
+            );
 
-            if ($response->getStatusCode() === 200) {
+            if (200 === $response->getStatusCode()) {
                 $data = $response->toArray(false);
-                $this->logger->info('Lead sent successfully: ' . $response->getContent());
+                $this->logger->info('Lead sent successfully: '.$response->getContent());
+
                 return $data;
             }
 
-            $this->logger->error('Lead API returned non-200 status: ' . $response->getStatusCode() . ', response: ' . $response->getContent());
+            $this->logger->error('Lead API returned non-200 status: '.$response->getStatusCode().', response: '.$response->getContent());
+
             return null;
         } catch (\Exception $e) {
-            $this->logger->error('Lead API error: ' . $e->getMessage());
+            $this->logger->error('Lead API error: '.$e->getMessage());
+
             return null;
         }
     }

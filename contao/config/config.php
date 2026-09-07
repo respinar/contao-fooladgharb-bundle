@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 use Respinar\ContaoFooladgharbBundle\Controller\Backend\RequestExportController;
 
-$GLOBALS['BE_MOD']['fooladgharb']['requests']= [
-		'tables' => ['tl_requests'],
-		'export_csv' => [
+$GLOBALS['BE_MOD']['fooladgharb']['requests'] = [
+    'tables' => ['tl_requests'],
+    'export_csv' => [
         RequestExportController::class,
         'exportCsv',
     ],

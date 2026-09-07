@@ -51,22 +51,18 @@ class RequestExportController
 
         rewind($handle);
 
-        throw new ResponseException($this->createDownloadResponse(
-            stream_get_contents($handle),
-            'requests.csv',
-            'text/csv; charset=UTF-8'
-        ));
+        throw new ResponseException($this->createDownloadResponse(stream_get_contents($handle), 'requests.csv', 'text/csv; charset=UTF-8'));
     }
 
     public function exportExcel(): never
     {
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<?mso-application progid="Excel.Sheet"?>' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<?mso-application progid="Excel.Sheet"?>'."\n";
         $xml .= '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" '
-            . 'xmlns:o="urn:schemas-microsoft-com:office:office" '
-            . 'xmlns:x="urn:schemas-microsoft-com:office:excel" '
-            . 'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' . "\n";
-        $xml .= '<Worksheet ss:Name="Requests"><Table>' . "\n";
+            .'xmlns:o="urn:schemas-microsoft-com:office:office" '
+            .'xmlns:x="urn:schemas-microsoft-com:office:excel" '
+            .'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'."\n";
+        $xml .= '<Worksheet ss:Name="Requests"><Table>'."\n";
         $xml .= $this->buildExcelRow(array_keys(self::COLUMNS));
 
         foreach ($this->getRows() as $row) {
@@ -75,11 +71,7 @@ class RequestExportController
 
         $xml .= '</Table></Worksheet></Workbook>';
 
-        throw new ResponseException($this->createDownloadResponse(
-            $xml,
-            'requests.xls',
-            'application/vnd.ms-excel; charset=UTF-8'
-        ));
+        throw new ResponseException($this->createDownloadResponse($xml, 'requests.xls', 'application/vnd.ms-excel; charset=UTF-8'));
     }
 
     /**
@@ -88,7 +80,8 @@ class RequestExportController
     private function getRows(): array
     {
         $result = Database::getInstance()
-            ->execute('SELECT * FROM tl_requests ORDER BY tstamp DESC LIMIT 100');
+            ->execute('SELECT * FROM tl_requests ORDER BY tstamp DESC LIMIT 100')
+        ;
 
         $rows = [];
 
@@ -120,11 +113,11 @@ class RequestExportController
 
         foreach ($cells as $cell) {
             $row .= '<Cell><Data ss:Type="String">'
-                . htmlspecialchars((string) $cell, ENT_XML1 | ENT_COMPAT, 'UTF-8')
-                . '</Data></Cell>';
+                .htmlspecialchars((string) $cell, ENT_XML1 | ENT_COMPAT, 'UTF-8')
+                .'</Data></Cell>';
         }
 
-        return $row . '</Row>' . "\n";
+        return $row.'</Row>'."\n";
     }
 
     private function createDownloadResponse(string $content, string $filename, string $contentType): Response
@@ -133,9 +126,9 @@ class RequestExportController
         $response->headers->set('Content-Type', $contentType);
         $response->headers->set(
             'Content-Disposition',
-            $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename)
+            $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename),
         );
-        $response->headers->set('Content-Length', (string) strlen($content));
+        $response->headers->set('Content-Length', (string) \strlen($content));
         $response->headers->set('Cache-Control', 'private, no-store, no-cache, must-revalidate');
 
         return $response;
