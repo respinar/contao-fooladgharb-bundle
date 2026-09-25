@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 use Contao\DataContainer;
 use Contao\DC_Table;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 
 $GLOBALS['TL_DCA']['tl_requests'] = [
     // Config
@@ -82,98 +83,98 @@ $GLOBALS['TL_DCA']['tl_requests'] = [
     // Fields
     'fields' => [
         'id' => [
-            'sql' => 'int(10) unsigned NOT NULL auto_increment',
+            'sql' => ['type' => 'integer', 'unsigned' => true, 'autoincrement' => true],
         ],
         'tstamp' => [
             'filter' => true,
             'sorting' => true,
             'flag' => DataContainer::SORT_DAY_DESC,
-            'sql' => 'int(10) unsigned NOT NULL default 0',
+            'sql' => ['type' => 'integer', 'unsigned' => true, 'default' => 0],
         ],
         'name' => [
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => 'varchar(255) NOT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'province' => [
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => 'varchar(255) NOT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'phone' => [
             'inputType' => 'text',
             'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => 'varchar(255) NOT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'email' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(255) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'message' => [
             'inputType' => 'textarea',
             'eval' => ['tl_class' => 'clr'],
-            'sql' => 'text NOT NULL',
+            'sql' => ['type' => 'text', 'length' => AbstractMySQLPlatform::LENGTH_LIMIT_TEXT, 'notnull' => false],
         ],
         'product' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(255) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'type' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(255) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'usage' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(255) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'insulation' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(255) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'area' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(255) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 255, 'default' => ''],
         ],
         'delivery' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(50) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 50, 'default' => ''],
         ],
         'date' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(50) NOT NULL',
+            'sql' => ['type' => 'string', 'length' => 50, 'default' => ''],
         ],
         'time' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(5) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 5, 'default' => ''],
         ],
         'url' => [
             'inputType' => 'text',
-            'eval' => ['tl_class' => 'w50'],
-            'sql' => 'varchar(255) NOT NULL',
+            'eval' => ['rgxp' => 'url', 'maxlength' => 2048, 'tl_class' => 'w50'],
+            'sql' => ['type' => 'string', 'length' => 2048, 'default' => ''],
         ],
         'send_status' => [
             'inputType' => 'checkbox',
             'eval' => ['tl_class' => 'w50', 'disabled' => true], // Disabled to prevent manual editing
-            'sql' => 'tinyint(1) unsigned NOT NULL default 0',
+            'sql' => ['type' => 'boolean', 'default' => false],
         ],
         'lead_id' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50', 'disabled' => true],
-            'sql' => 'varchar(10) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 10, 'default' => ''],
         ],
         'client_id' => [
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50', 'disabled' => true],
-            'sql' => 'varchar(10) DEFAULT NULL',
+            'sql' => ['type' => 'string', 'length' => 10, 'default' => ''],
         ],
     ],
 ];
