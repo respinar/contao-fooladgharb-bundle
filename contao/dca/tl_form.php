@@ -10,4 +10,4 @@ declare(strict_types=1);
  * @license MIT
  */
 
-$GLOBALS['TL_DCA']['tl_form']['fields']['targetTable']['options'][] = 'tl_requests';
+$GLOBALS['TL_DCA']['tl_form']['fields']['targetTable']['options'][] = 'tl_fooladgharb_requests';
