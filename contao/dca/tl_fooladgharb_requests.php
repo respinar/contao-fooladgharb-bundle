@@ -11,14 +11,14 @@ declare(strict_types=1);
  */
 
 /*
- * Table tl_requests
+ * Table tl_fooladgharb_requests
  */
 
 use Contao\DataContainer;
 use Contao\DC_Table;
 use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 
-$GLOBALS['TL_DCA']['tl_requests'] = [
+$GLOBALS['TL_DCA']['tl_fooladgharb_requests'] = [
     // Config
     'config' => [
         'dataContainer' => DC_Table::class,
@@ -55,13 +55,13 @@ $GLOBALS['TL_DCA']['tl_requests'] = [
                 'href' => 'key=export_csv',
                 'icon' => 'bundles/contaofooladgharb/icons/export-csv.svg',
                 'primary' => true,
-                'attributes' => 'title="'.($GLOBALS['TL_LANG']['tl_requests']['export_csv'][1] ?? 'Export all requests as a CSV file').'"',
+                'attributes' => 'title="'.($GLOBALS['TL_LANG']['tl_fooladgharb_requests']['export_csv'][1] ?? 'Export all requests as a CSV file').'"',
             ],
             'export_excel' => [
                 'href' => 'key=export_excel',
                 'icon' => 'bundles/contaofooladgharb/icons/export-excel.svg',
                 'primary' => true,
-                'attributes' => 'title="'.($GLOBALS['TL_LANG']['tl_requests']['export_excel'][1] ?? 'Export all requests as an Excel file').'"',
+                'attributes' => 'title="'.($GLOBALS['TL_LANG']['tl_fooladgharb_requests']['export_excel'][1] ?? 'Export all requests as an Excel file').'"',
             ],
         ],
         'operations' => [
