@@ -1,10 +1,10 @@
 # Fooladgharb Request Bundle
 
-A Contao 5 bundle for storing website requests in the `tl_requests` table and managing them from the Contao backend.
+A Contao 5 bundle for storing website requests in the `tl_fooladgharb_requests` table and managing them from the Contao backend.
 
 ## Features
 
-- Adds `tl_requests` as a form target table.
+- Adds `tl_fooladgharb_requests` as a form target table.
 - Adds a backend module under **Fooladgharb > Requests**.
 - Shows submitted requests in a Contao backend list view.
 - Exports all requests as downloadable CSV files.
@@ -51,7 +51,7 @@ Open the Contao backend and go to:
 Fooladgharb > Requests
 ```
 
-The module lists submitted requests from `tl_requests`.
+The module lists submitted requests from `tl_fooladgharb_requests`.
 
 Use the header buttons to download exports:
 
@@ -60,12 +60,12 @@ Use the header buttons to download exports:
 
 ## Form Integration
 
-The bundle adds `tl_requests` to the Contao form generator target table options.
+The bundle adds `tl_fooladgharb_requests` to the Contao form generator target table options.
 
 Create or edit a form in the Contao backend, enable form data storage, and select:
 
 ```text
-tl_requests
+tl_fooladgharb_requests
 ```
 
 ## Exported Fields
