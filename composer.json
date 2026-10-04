@@ -18,9 +18,10 @@
     },
     "require": {
         "php": "^8.3",
-        "contao/core-bundle":"^5.3"
+        "contao/core-bundle":"^5.7"
     },
     "require-dev": {
+        "contao/news-bundle": "^5.7",
         "contao/manager-plugin": "^2.12",
         "contao/easy-coding-standard": "^7.1"
     },
@@ -28,7 +29,7 @@
         "psr-4": {
             "Respinar\\ContaoFooladgharbBundle\\": "src/"
         }
-    },    
+    },
     "extra": {
         "contao-manager-plugin": "Respinar\\ContaoFooladgharbBundle\\ContaoManager\\Plugin"
     },
