@@ -23,13 +23,14 @@ class NewsAliasListener
 {
     public function __construct(
         private readonly Slug $slug,
-    ) {
-    }
+    ) {}
 
     public function __invoke(?string $value, DataContainer $dc): string
     {
+        $value ??= '';
+
         if (!$dc->activeRecord) {
-            return (string) $value;
+            return $value;
         }
 
         $currentId = (int) $dc->id;
@@ -71,11 +72,21 @@ class NewsAliasListener
         };
 
         // Generate an alias automatically when the field is empty.
-        if ($value === null || $value === '') {
+        if ('' === $value) {
             return $this->slug->generate(
                 (string) $dc->activeRecord->headline,
                 $jumpTo ?: [],
                 $aliasExists,
+            );
+        }
+
+        // Numeric aliases would collide with the numeric auto_item routing.
+        if (preg_match('/^[1-9]\d*$/', $value)) {
+            throw new \Exception(
+                sprintf(
+                    $GLOBALS['TL_LANG']['ERR']['aliasNumeric'],
+                    $value,
+                )
             );
         }
 
