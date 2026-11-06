@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Contao Whatsapp Button Bundle.
+ * This file is part of Contao Fooladgharb Bundle.
  *
  * (c) Hamid Peywasti
  *
@@ -15,130 +15,188 @@ namespace Respinar\ContaoFooladgharbBundle\EventListener;
 use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Form;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsHook('storeFormData')]
 class SendFormDataListener
 {
-    private HttpClientInterface $httpClient;
-    private LoggerInterface $logger;
+    private const BASE_URL = 'https://my.fooladgharb.com/api';
+    private const TARGET_TABLE = 'tl_fooladgharb_requests';
 
-    public function __construct(HttpClientInterface $httpClient, LoggerInterface $contaoGeneralLogger)
-    {
-        $this->httpClient = $httpClient;
-        $this->logger = $contaoGeneralLogger;
+    public function __construct(
+        private readonly HttpClientInterface $httpClient,
+        private readonly LoggerInterface $contaoGeneralLogger,
+        // Set FOOLADGHARB_CRM_KEY in .env.local (and rotate the old key!)
+        #[Autowire('%env(FOOLADGHARB_CRM_KEY)%')]
+        private readonly string $apiKey,
+    ) {
     }
 
     public function __invoke(array $data, Form $form): array
     {
-        $api_key = '$2a$08$T6x8FV.j/mAE./sa4PxO0Ofin1ph21vfd';
-
-        $token = $this->getAuthToken($api_key);
-
-        if (!$token) {
-            $this->logger->error('Failed to get auth token.');
-
+        // Only handle the RFQ form that stores into our table
+        if (self::TARGET_TABLE !== $form->targetTable) {
             return $data;
         }
 
-        $this->logger->info('Auth token retrieved successfully.');
+        // Defaults match the DCA (string columns, default ''):
+        // a CRM failure must never break the user's form submission
+        $data['send_status'] = 0;
+        $data['lead_id'] = '';
+        $data['client_id'] = '';
 
-        $leadData = [
-            'lead_process_id' => '1',
-            'source' => '15',
-            'name' => $data['name'] ?? 'بدون نام',
-            'mobile' => $data['phone'] ?? '',
-            'address' => $data['address'] ?? '',
-            'email' => $data['email'] ?? '',
-            'custom_fields[leads][7]' => $data['national_id'] ?? '',
-            'custom_fields[leads][8]' => $data['code'] ?? '',
-            'custom_fields[leads][9]' => $data['branch'] ?? '',
-            'custom_fields[leads][10]' => $data['country'] ?? '',
-        ];
+        try {
+            $token = $this->getAuthToken();
 
-        if (!empty($data['upload']) && file_exists($data['upload'])) {
-            $leadData['file[]'] = new \SplFileInfo($data['upload']);
-        }
+            if (null === $token) {
+                $this->contaoGeneralLogger->error('Failed to get auth token.');
 
-        $response = $this->sendLead($leadData, $api_key, $token);
+                return $data;
+            }
 
-        if ($response) {
-            $this->logger->info('Lead sent successfully via API.');
+            $response = $this->sendLead($this->buildLeadData($data), $token);
+
+            if (null === $response) {
+                $this->contaoGeneralLogger->error('Failed to send lead via API.');
+
+                return $data;
+            }
+
             $data['send_status'] = 1;
-            $data['lead_id'] = $response['lead_id'];
-            $data['client_id'] = $response['client_id'];
-        } else {
-            $this->logger->error('Failed to send lead via API.');
+            $data['lead_id'] = (string) ($response['lead_id'] ?? '');
+            $data['client_id'] = (string) ($response['client_id'] ?? '');
+
+            if ('' === $data['lead_id']) {
+                $this->contaoGeneralLogger->warning('Lead accepted by API but no lead_id in response.');
+            } else {
+                $this->contaoGeneralLogger->info('Lead sent successfully via API. lead_id='.$data['lead_id']);
+            }
+        } catch (\Throwable $e) {
+            $this->contaoGeneralLogger->error('Unexpected error while sending lead: '.$e->getMessage());
         }
 
         return $data;
     }
 
-    private function getAuthToken(string $api_key): string|null
+    /**
+     * Maps the fields of tl_fooladgharb_requests to the CRM lead payload.
+     */
+    private function buildLeadData(array $data): array
+    {
+        $v = static fn (string $key): string => trim(
+            \is_array($data[$key] ?? null) ? implode(', ', $data[$key]) : (string) ($data[$key] ?? '')
+        );
+
+        $lines = [];
+        $add = static function (string $label, string $value) use (&$lines): void {
+            if ('' !== $value) {
+                $lines[] = $label.': '.$value;
+            }
+        };
+
+        $add('استان', $v('province'));
+        $add('محصول', $v('product'));
+        $add('نوع', $v('type'));
+        $add('کاربری', $v('usage'));
+        $add('عایق', $v('insulation'));
+        $add('متراژ', $v('area'));
+        $add('نحوه تحویل', $v('delivery'));
+        $add('تاریخ', trim($v('date').' '.$v('time')));
+        $add('پیام', $v('message'));
+        $add('صفحه', $v('url'));
+
+        return [
+            'lead_process_id' => '1',
+            'source' => '15',
+            'name' => '' !== $v('name') ? $v('name') : 'بدون نام',
+            'mobile' => $v('phone'),
+            'email' => $v('email'),
+            'address' => $v('province'),
+            // Assumption: the CRM accepts "description" (Perfex-style). Verify in the API docs.
+            'description' => implode("\n", $lines),
+        ];
+    }
+
+    private function getAuthToken(): ?string
     {
         try {
-            $response = $this->httpClient->request(
-                'GET',
-                'https://my.fooladgharb.com/api/token',
-                [
-                    'headers' => [
-                        'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
-                    ],
-                ],
-            );
+            $response = $this->httpClient->request('GET', self::BASE_URL.'/token', [
+                'headers' => ['x-api-key' => $this->apiKey],
+                'timeout' => 5,
+                'max_duration' => 10,
+            ]);
 
-            if (200 === $response->getStatusCode()) {
-                $data = $response->toArray(false);
-                if (isset($data['result'])) {
-                    $this->logger->info('Auth token retrieved: '.$data['result']);
-
-                    return $data['result'];
-                }
-                $this->logger->error('No result key found in API response: '.$response->getContent());
+            if (200 !== $response->getStatusCode()) {
+                $this->contaoGeneralLogger->error('Auth API returned non-200 status: '.$response->getStatusCode());
 
                 return null;
             }
 
-            $this->logger->error('Auth API returned non-200 status: '.$response->getStatusCode());
+            $json = $response->toArray(false);
+
+            if (!empty($json['result']) && \is_string($json['result'])) {
+                // Never log the token itself
+                $this->contaoGeneralLogger->info('Auth token retrieved.');
+
+                return $json['result'];
+            }
+
+            $this->contaoGeneralLogger->error('No "result" key found in auth API response.');
 
             return null;
-        } catch (\Exception $e) {
-            $this->logger->error('Auth API error: '.$e->getMessage());
+        } catch (\Throwable $e) {
+            $this->contaoGeneralLogger->error('Auth API error: '.$e->getMessage());
 
             return null;
         }
     }
 
-    private function sendLead(array $leadData, string $api_key, string $authToken): array|null
+    /**
+     * Returns the decoded response only if the CRM really created the lead.
+     */
+    private function sendLead(array $leadData, string $authToken): ?array
     {
         try {
-            $response = $this->httpClient->request(
-                'POST',
-                'https://my.fooladgharb.com/api/leads/v1/add',
-                [
-                    'headers' => [
-                        'authtoken' => $authToken,
-                        'x-api-key' => $api_key ?? throw new \RuntimeException('CRM_API_KEY not set'),
-                        // Add cookies if required (see below) 'Cookie' =>
-                        // 'csrf_cookie_name=28d1a96241d672ef34ad63005bc7eecc;
-                        // sp_session=maibm2oij0qtlnnmosk2c92iko53l0pu',
-                    ],
-                    'body' => $leadData, // Use json_encode($leadData) if API expects JSON
+            $response = $this->httpClient->request('POST', self::BASE_URL.'/leads/v1/add', [
+                'headers' => [
+                    'authtoken' => $authToken,
+                    'x-api-key' => $this->apiKey,
                 ],
-            );
+                'body' => $leadData, // form-encoded
+                'timeout' => 10,
+                'max_duration' => 20,
+            ]);
 
-            if (200 === $response->getStatusCode()) {
-                $data = $response->toArray(false);
-                $this->logger->info('Lead sent successfully: '.$response->getContent());
+            $statusCode = $response->getStatusCode();
+            $content = $response->getContent(false);
 
-                return $data;
+            if (200 !== $statusCode) {
+                $this->contaoGeneralLogger->error(sprintf('Lead API returned HTTP %d: %s', $statusCode, $content));
+
+                return null;
             }
 
-            $this->logger->error('Lead API returned non-200 status: '.$response->getStatusCode().', response: '.$response->getContent());
+            $json = json_decode($content, true);
 
-            return null;
-        } catch (\Exception $e) {
-            $this->logger->error('Lead API error: '.$e->getMessage());
+            if (!\is_array($json)) {
+                $this->contaoGeneralLogger->error('Lead API returned a non-JSON body: '.mb_substr($content, 0, 500));
+
+                return null;
+            }
+
+            // HTTP 200 does not mean success: check the "status" flag in the body
+            if (empty($json['status'])) {
+                $this->contaoGeneralLogger->error('Lead API rejected the lead: '.$content, [
+                    'sent_fields' => array_keys($leadData),
+                ]);
+
+                return null;
+            }
+
+            return $json;
+        } catch (\Throwable $e) {
+            $this->contaoGeneralLogger->error('Lead API error: '.$e->getMessage());
 
             return null;
         }
