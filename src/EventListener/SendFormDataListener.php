@@ -40,6 +40,11 @@ class SendFormDataListener
             return $data;
         }
 
+        // Multi-value form fields (checkbox groups, multi-selects) arrive as
+        // arrays, but every target column is a plain string: flatten them so
+        // no serialized-array garbage (e.g. "a:2:{...}") ends up in the record.
+        $data = $this->flattenArrayValues($data);
+
         // Defaults match the DCA (string columns, default ''):
         // a CRM failure must never break the user's form submission
         $data['send_status'] = 0;
@@ -74,6 +79,24 @@ class SendFormDataListener
             }
         } catch (\Throwable $e) {
             $this->contaoGeneralLogger->error('Unexpected error while sending lead: '.$e->getMessage());
+        }
+
+        return $data;
+    }
+
+    /**
+     * Multi-value form fields (checkbox groups, multi-selects) submit arrays,
+     * but every column of tl_fooladgharb_requests is a plain string column.
+     */
+    private function flattenArrayValues(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            if (\is_array($value)) {
+                $data[$key] = implode(', ', array_map(
+                    static fn ($item): string => \is_scalar($item) ? (string) $item : '',
+                    $value,
+                ));
+            }
         }
 
         return $data;
@@ -122,13 +145,27 @@ class SendFormDataListener
     {
         try {
             $response = $this->httpClient->request('GET', self::BASE_URL.'/token', [
-                'headers' => ['x-api-key' => $this->apiKey],
+                'headers' => [
+                    // Stock Perfex CRM authenticates /api/token via the
+                    // "authtoken" header; keep "x-api-key" as well in case
+                    // the deployment expects it.
+                    'authtoken' => $this->apiKey,
+                    'x-api-key' => $this->apiKey,
+                ],
                 'timeout' => 5,
                 'max_duration' => 10,
             ]);
 
             if (200 !== $response->getStatusCode()) {
-                $this->contaoGeneralLogger->error('Auth API returned non-200 status: '.$response->getStatusCode());
+                // Log the response body so the CRM's actual rejection reason
+                // (invalid key, wrong auth scheme, WAF block page) is visible
+                $this->contaoGeneralLogger->error(
+                    \sprintf(
+                        'Auth API returned HTTP %d: %s',
+                        $response->getStatusCode(),
+                        mb_substr($response->getContent(false), 0, 500),
+                    ),
+                );
 
                 return null;
             }
