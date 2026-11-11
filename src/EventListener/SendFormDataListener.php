@@ -95,7 +95,8 @@ class SendFormDataListener
             }
         };
 
-        $add('استان', $v('province'));
+        $add('شرکت', $v('company'));
+        $add('موقعیت', $v('location'));
         $add('محصول', $v('product'));
         $add('نوع', $v('type'));
         $add('کاربری', $v('usage'));
