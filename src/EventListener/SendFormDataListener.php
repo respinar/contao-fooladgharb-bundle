@@ -1,3 +1,4 @@
+
 <?php
 
 declare(strict_types=1);
@@ -47,6 +48,11 @@ class SendFormDataListener
         $data['client_id'] = '';
 
         try {
+            $this->logger->info('CRM API key configuration check', [
+                'configured' => $this->apiKey !== '',
+                'length' => strlen($this->apiKey),
+            ]);
+
             $authToken = $this->getAuthToken();
 
             if (null === $authToken) {
