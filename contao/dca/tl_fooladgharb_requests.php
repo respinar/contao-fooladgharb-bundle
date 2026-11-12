@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_fooladgharb_requests'] = [
             'panelLayout' => 'filter;sort,search,limit',
         ],
         'label' => [
-            'fields' => ['tstamp', 'name', 'province', 'phone', 'date', 'product', 'area', 'lead_id'],
+            'fields' => ['tstamp', 'name', 'company', 'location', 'phone', 'date', 'product', 'area', 'lead_id'],
             'showColumns' => true,
             // 'label_callback' => ['tl_log', 'colorize')
         ],
