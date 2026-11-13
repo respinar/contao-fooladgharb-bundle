@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of Fooladgharb Bundle.
+ * This file is part of Contao Fooladgharb Bundle.
  *
  * (c) Hamid Peywasti
  *
@@ -22,13 +22,14 @@ use Throwable;
 #[AsHook('storeFormData')]
 class SendFormDataListener
 {
-    private const BASE_URL = 'https://my.fooladgharb.com/api';
-
-    private const TARGET_TABLE = 'tl_fooladgharb_requests';
+    private const API_BASE_URL = 'https://my.fooladgharb.com/api';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
+
+        #[Autowire(service: 'monolog.logger.contao.general')]
         private readonly LoggerInterface $logger,
+
         #[Autowire('%env(FOOLADGHARB_CRM_KEY)%')]
         private readonly string $apiKey,
     ) {
@@ -36,50 +37,84 @@ class SendFormDataListener
 
     public function __invoke(array $data, Form $form): array
     {
-        if (self::TARGET_TABLE !== $form->targetTable) {
+        // Only process the intended Contao form.
+        if ('tl_fooladgharb_requests' !== $form->targetTable) {
             return $data;
         }
 
-        $data = $this->flattenArrayValues($data);
+        if ('' === $this->apiKey) {
+            $this->logger->error('CRM: API key is not configured.');
 
-        $data['send_status'] = 0;
-        $data['lead_id'] = '';
-        $data['client_id'] = '';
+            return $data;
+        }
 
         try {
-            $this->logger->info('CRM API key configuration check', [
-                'configured' => $this->apiKey !== '',
-                'length' => strlen($this->apiKey),
-            ]);
+            // STEP 1: Get authentication token.
+            $token = $this->getAuthToken();
 
-            $authToken = $this->getAuthToken();
-
-            if (null === $authToken) {
-                $this->logger->error('CRM authentication failed. No authtoken received.');
-
+            if (null === $token) {
                 return $data;
             }
 
-            $result = $this->sendLead(
-                $this->buildLeadData($data),
-                $authToken,
-            );
+            // STEP 2: Prepare lead data.
+            $leadData = [
+                'lead_process_id' => '1',
+                'source' => '15',
 
-            if (null === $result) {
+                // Standard CRM fields.
+                'name' => $data['name'] ?? 'بدون نام',
+                'mobile' => $data['phone'] ?? '',
+                'email' => $data['email'] ?? '',
+                'address' => $data['location'] ?? '',
+
+                // Customer message and RFQ details.
+                'description' => implode("\n", array_filter([
+                    'Company: '.($data['company'] ?? ''),
+                    'Product: '.($data['product'] ?? ''),
+                    'Type: '.($data['type'] ?? ''),
+                    'Usage: '.($data['usage'] ?? ''),
+                    'Insulation: '.($data['insulation'] ?? ''),
+                    'Area: '.($data['area'] ?? ''),
+                    'Delivery: '.($data['delivery'] ?? ''),
+                    'Date: '.($data['date'] ?? ''),
+                    'Time: '.($data['time'] ?? ''),
+                    'Message: '.($data['message'] ?? ''),
+                    'URL: '.($data['url'] ?? ''),
+                ])),
+            ];
+
+            // STEP 3: Attach uploaded file if available.
+            if (
+                !empty($data['upload'])
+                && is_string($data['upload'])
+                && is_file($data['upload'])
+                && is_readable($data['upload'])
+            ) {
+                $leadData['file[]'] = new \SplFileInfo($data['upload']);
+            }
+
+            // STEP 4: Submit lead.
+            $response = $this->sendLead($leadData, $token);
+
+            if (null === $response) {
                 return $data;
             }
 
+            // STEP 5: Store CRM response in Contao form data.
             $data['send_status'] = 1;
-            $data['lead_id'] = (string) ($result['lead_id'] ?? '');
-            $data['client_id'] = (string) ($result['client_id'] ?? '');
+            $data['lead_id'] = (string) ($response['lead_id'] ?? '');
+            $data['client_id'] = (string) ($response['client_id'] ?? '');
 
-            $this->logger->info('CRM lead submitted successfully.', [
-                'lead_id' => $data['lead_id'],
-                'client_id' => $data['client_id'],
-            ]);
-        } catch (Throwable $e) {
-            $this->logger->error('CRM API request failed.', [
-                'message' => $e->getMessage(),
+            if ('' === $data['lead_id'] || '' === $data['client_id']) {
+                $this->logger->error('CRM: Successful response is missing required identifiers.', [
+                    'lead_id_received' => '' !== $data['lead_id'],
+                    'client_id_received' => '' !== $data['client_id'],
+                ]);
+            }
+        } catch (Throwable $exception) {
+            $this->logger->error('CRM: Unexpected error during submission.', [
+                'exception' => $exception->getMessage(),
+                'exception_class' => $exception::class,
             ]);
         }
 
@@ -88,101 +123,101 @@ class SendFormDataListener
 
     private function getAuthToken(): ?string
     {
-        $response = $this->httpClient->request(
-            'GET',
-            self::BASE_URL . '/token',
-            [
-                'headers' => [
-                    'X-API-KEY' => trim($this->apiKey),
+        try {
+            $response = $this->httpClient->request(
+                'GET',
+                self::API_BASE_URL.'/token',
+                [
+                    'headers' => [
+                        'X-API-KEY' => $this->apiKey,
+                    ],
+                    'timeout' => 30,
                 ],
-            ],
-        );
+            );
 
-        $statusCode = $response->getStatusCode();
-        $responseData = $response->toArray(false);
+            $statusCode = $response->getStatusCode();
+            $responseData = $response->toArray(false);
 
-        if (200 !== $statusCode || empty($responseData['result'])) {
-            $this->logger->error('CRM token request failed.', [
-                'http_status' => $statusCode,
-                'response' => $responseData,
+            if (200 !== $statusCode || empty($responseData['status'])) {
+                $this->logger->error('CRM TOKEN: Authentication request failed.', [
+                    'http_status' => $statusCode,
+                ]);
+
+                return null;
+            }
+
+            $token = $responseData['result'] ?? null;
+
+            if (!is_string($token) || '' === $token) {
+                $this->logger->error('CRM TOKEN: Invalid token response.');
+
+                return null;
+            }
+
+            return $token;
+        } catch (Throwable $exception) {
+            $this->logger->error('CRM TOKEN: Request exception.', [
+                'exception' => $exception->getMessage(),
+                'exception_class' => $exception::class,
             ]);
 
             return null;
         }
-
-        return (string) $responseData['result'];
     }
 
     private function sendLead(array $leadData, string $authToken): ?array
     {
-        $response = $this->httpClient->request(
-            'POST',
-            self::BASE_URL . '/leads/v1/add',
-            [
-                'headers' => [
-                    'authtoken' => $authToken,
-                    'X-API-KEY' => trim($this->apiKey),
+        try {
+            $response = $this->httpClient->request(
+                'POST',
+                self::API_BASE_URL.'/leads/v1/add',
+                [
+                    'headers' => [
+                        'authtoken' => $authToken,
+                        'X-API-KEY' => $this->apiKey,
+                    ],
+                    'body' => $leadData,
+                    'timeout' => 30,
                 ],
-                'body' => $leadData,
-            ],
-        );
+            );
 
-        $statusCode = $response->getStatusCode();
-        $responseData = $response->toArray(false);
+            $statusCode = $response->getStatusCode();
+            $responseData = $response->toArray(false);
 
-        if (200 !== $statusCode || empty($responseData['status'])) {
-            $this->logger->error('CRM lead submission failed.', [
-                'http_status' => $statusCode,
-                'response' => $responseData,
+            if (200 !== $statusCode || empty($responseData['status'])) {
+                $this->logger->error('CRM LEAD: Submission rejected.', [
+                    'http_status' => $statusCode,
+                    'crm_status' => $responseData['status'] ?? null,
+                    'message' => $responseData['message'] ?? null,
+                ]);
+
+                return null;
+            }
+
+            /*
+             * CRM response structure:
+             *
+             * {
+             *     "status": true,
+             *     "message": "...",
+             *     "lead_id": "...",
+             *     "client_id": "..."
+             * }
+             *
+             * Both IDs are at the top level.
+             */
+
+            return [
+                'lead_id' => $responseData['lead_id'] ?? '',
+                'client_id' => $responseData['client_id'] ?? '',
+            ];
+        } catch (Throwable $exception) {
+            $this->logger->error('CRM LEAD: Request exception.', [
+                'exception' => $exception->getMessage(),
+                'exception_class' => $exception::class,
             ]);
 
             return null;
         }
-
-        return $responseData['data'] ?? [];
-    }
-
-    private function buildLeadData(array $data): array
-    {
-        $description = [
-            'شرکت: ' . ($data['company'] ?? ''),
-            'محل پروژه: ' . ($data['location'] ?? ''),
-            'محصول: ' . ($data['product'] ?? ''),
-            'نوع محصول: ' . ($data['type'] ?? ''),
-            'کاربری: ' . ($data['usage'] ?? ''),
-            'نوع عایق: ' . ($data['insulation'] ?? ''),
-            'متراژ: ' . ($data['area'] ?? ''),
-            'نحوه تحویل: ' . ($data['delivery'] ?? ''),
-            'تاریخ: ' . ($data['date'] ?? ''),
-            'ساعت: ' . ($data['time'] ?? ''),
-            'توضیحات: ' . ($data['message'] ?? ''),
-            'آدرس صفحه: ' . ($data['url'] ?? ''),
-        ];
-
-        $description = array_filter(
-            $description,
-            static fn (string $value): bool => !str_ends_with($value, ': '),
-        );
-
-        return [
-            'lead_process_id' => '1',
-            'source' => '15',
-            'name' => !empty($data['name']) ? $data['name'] : 'بدون نام',
-            'mobile' => $data['phone'] ?? '',
-            'email' => $data['email'] ?? '',
-            'address' => $data['location'] ?? '',
-            'description' => implode("\n", $description),
-        ];
-    }
-
-    private function flattenArrayValues(array $data): array
-    {
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $data[$key] = implode(', ', array_filter($value));
-            }
-        }
-
-        return $data;
     }
 }
